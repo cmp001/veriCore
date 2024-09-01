@@ -1,0 +1,465 @@
+`timescale 1ns / 1ps
+module booth_16(x,y,z);
+input signed [15:0] x,y;
+output signed [31:0] z;
+reg signed [31:0] z;
+reg[1:0] temp;//q_1 and multiplicand(y) last bit
+integer i;// for purpose of loop
+reg e1;// stores the previous bit of booth may be q_1
+reg [15:0] y1;//declares 16 bit to store negated value of y i.e; multiplicand
+always @(x,y)
+begin
+z = 32'd0;
+e1 = 1'd0;
+y1 = - y;// used to store negated of y in y1
+z[15:0]=x;//places the i/p of first 16 in lower bits of z and other 16 will be zero
+for(i=0;i<16;i=i+1)//iteartion 16 times for 16 x i/p
+begin
+temp={x[i],e1}; //concates the psnt bit of x and previous bit of e1
+case(temp)
+2'd2 : z[31:16]=z[31:16]+y1;//acc+multiplicand 
+2'd1 : z[31:16]=z[31:16]+y;//acc-multiplicand
+default : begin end
+endcase
+z=z>>1; // right shift
+z[31]=z[30];//assigning the sign bit before shift to the after shifted one
+e1=x[i]; // updates the value with curnt bit of x for nxt iteration
+end
+end
+endmodule
+
+
+//testbench
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   09:56:19 05/21/2024
+// Design Name:   booth_16
+// Module Name:   C:/Users/r/Desktop/internship_nit/booth_link/booth_16_tb.v
+// Project Name:  booth_link
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: booth_16
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module booth_16_tb;
+
+	// Inputs
+	reg [15:0] x;
+	reg [15:0] y;
+
+	// Outputs
+	wire [31:0] z;
+
+	// Instantiate the Unit Under Test (UUT)
+	booth_16 uut (
+		.x(x), 
+		.y(y), 
+		.z(z)
+	);
+
+	initial begin
+x= 16'b1111000000000000;
+y = 16'b1111000000000000;
+
+#10
+
+x= 16'b1001010100000000;
+y = 16'b10000000000000;
+
+#10
+
+x = 16'b011100000000;
+y = 16'b000000000;
+
+#10
+
+y = 16'b100000000;
+x = 16'b100000000;
+
+#10  
+
+x = 16'b00111100;
+y = 16'b010100000000;
+
+#10
+
+x = 16'b1000000000101010;
+y = 16'b100011;
+
+#10
+
+x = 16'b010001;
+y = 16'b11100;
+
+#10
+x = 16'b1000;
+y = 16'b1011111100000000;
+
+		
+	end
+      
+endmodule
+
+
+//32 bit//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+`timescale 1ns / 1ps
+module booth_16(x,y,z);
+input signed [31:0] x,y;
+output signed [63:0] z;
+reg signed [63:0] z;
+reg[1:0] temp;//q_1 and multiplicand(y) last bit
+integer i;// for purpose of loop
+reg e1;// stores the previous bit of booth may be q_1
+reg [31:0] y1;//declares 16 bit to store negated value of y i.e; multiplicand
+always @(x,y)
+begin
+z = 64'd0;
+e1 = 1'd0;
+y1 = - y;// used to store negated of y in y1
+z[31:0]=x;//places the i/p of first 16 in lower bits of z and other 16 will be zero
+for(i=0;i<32;i=i+1)//iteartion 16 times for 16 x i/p
+begin
+temp={x[i],e1}; //concates the psnt bit of x and previous bit of e1
+case(temp)
+2'd2 : z[63:32]=z[63:32]+y1;//acc+multiplicand 
+2'd1 : z[63:32]=z[63:32]+y;//acc-multiplicand
+default : begin end
+endcase
+z=z>>1; // right shift
+z[63]=z[62];//assigning the sign bit before shift to the after shifted one
+e1=x[i]; // updates the value with curnt bit of x for nxt iteration
+end
+end
+endmodule
+
+//testbench
+
+`timescale 1ns / 1ps
+module booth32_tb;
+
+	// Inputs
+	reg [31:0] x;
+	reg [31:0] y;
+
+	// Outputs
+	wire [63:0] z;
+
+	// Instantiate the Unit Under Test (UUT)
+	booth_16 uut (
+		.x(x), 
+		.y(y), 
+		.z(z)
+	);
+
+	initial begin
+	x= 32'b11110000000000001111000000000000;
+y = 32'b11110000000000001111000000000000;
+
+#10
+
+x= 32'b10010101000000001111000000000000;
+y = 32'b10000000000000000000000000101011;
+
+#10
+
+x = 32'b0111000000001111000000000000;
+y = 32'b0000000001111000000000000000;
+
+#10
+
+y = 32'b100000000;
+x = 32'b100000000;
+
+#10  
+
+x = 32'b00111100;
+y = 32'b010100000000;
+
+#10
+
+x = 32'b1000000000101010;
+y = 32'b100011;
+
+#10
+
+x = 32'b010001;
+y = 32'b11100;
+
+#10
+x = 32'b10001111000000000000;
+y = 32'b1011111100000000;
+#10 $finish;
+	end
+      
+endmodule
+
+
+
+//64bit////////////////////////////////////////////////////////////////////////////////////////////////////////
+`timescale 1ns / 1ps
+module booth_16(x,y,z);
+input signed [63:0] x,y;
+output signed [127:0] z;
+reg signed [127:0] z;
+reg[1:0] temp;//q_1 and multiplicand(y) last bit
+integer i;// for purpose of loop
+reg e1;// stores the previous bit of booth may be q_1
+reg [63:0] y1;//declares 16 bit to store negated value of y i.e; multiplicand
+always @(x,y)
+begin
+z = 128'd0;
+e1 = 1'd0;
+y1 = - y;// used to store negated of y in y1
+z[63:0]=x;//places the i/p of first 16 in lower bits of z and other 16 will be zero
+for(i=0;i<64;i=i+1)//iteartion 16 times for 16 x i/p
+begin
+temp={x[i],e1}; //concates the psnt bit of x and previous bit of e1
+case(temp)
+2'd2 : z[127:64]=z[127:64]+y1;//acc+multiplicand 
+2'd1 : z[127:64]=z[127:64]+y;//acc-multiplicand
+default : begin end
+endcase
+z=z>>1; // right shift
+z[127]=z[126];//assigning the sign bit before shift to the after shifted one
+e1=x[i]; // updates the value with curnt bit of x for nxt iteration
+end
+end
+endmodule
+
+
+`timescale 1ns / 1ps
+module booth_tb;
+
+	// Inputs
+	reg [63:0] x;
+	reg [63:0] y;
+
+	// Outputs
+	wire [127:0] z;
+
+	// Instantiate the Unit Under Test (UUT)
+	booth_16 uut (
+		.x(x), 
+		.y(y), 
+		.z(z)
+	);
+
+	initial begin
+		
+        // Test positive values
+        x= 64'd123456789012345;
+        y= 64'd98765432109876;
+        #10;
+        //display_result(multiplicand, multiplier, product);
+
+        // Test positive and negative values
+        x = -64'd123456789012345;
+       y = 64'd98765432109876;
+        #10;
+        //display_result(multiplicand, multiplier, product);
+
+        // Test negative and positive values
+        x= 64'd123456789012345;
+        y = -64'd98765432109876;
+        #10;
+        //display_result(multiplicand, multiplier, product);
+
+        // Test negative values
+        x = -64'd123456789012345;
+        y= -64'd98765432109876;
+        #10;
+        //display_result(multiplicand, multiplier, product);
+
+        // Test large positive values
+        x = 64'd9223372036854775807; // Maximum positive 64-bit value
+        y = 64'd2;
+        #10;
+        //display_result(multiplicand, multiplier, product);
+
+        // Test large negative values
+        x = -64'd9223372036854775808; // Minimum negative 64-bit value
+        y = -64'd1;
+        #10;
+        //display_result(multiplicand, multiplier, product);
+
+        // End simulation
+        $stop;
+ 
+
+	end
+      
+endmodule
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//8bit
+`timescale 1ns / 1ps
+module booth_16(x,y,z);
+input signed [7:0] x,y;
+output signed [15:0] z;
+reg signed [15:0] z;
+reg[1:0] temp;//q_1 and multiplicand(y) last bit
+integer i;// for purpose of loop
+reg e1;// stores the previous bit of booth may be q_1
+reg [7:0] y1;//declares 16 bit to store negated value of y i.e; multiplicand
+always @(x,y)
+begin
+z = 16'd0;
+e1 = 1'd0;
+y1 = - y;// used to store negated of y in y1
+z[7:0]=x;//places the i/p of first 16 in lower bits of z and other 16 will be zero
+for(i=0;i<8;i=i+1)//iteartion 16 times for 16 x i/p
+begin
+temp={x[i],e1}; //concates the psnt bit of x and previous bit of e1
+case(temp)
+2'd2 : z[15:8]=z[15:8]+y1;//acc+multiplicand 
+2'd1 : z[15:8]=z[15:8]+y;//acc-multiplicand
+default : begin end
+endcase
+z=z>>1; // right shift
+z[15]=z[14];//assigning the sign bit before shift to the after shifted one
+e1=x[i]; // updates the value with curnt bit of x for nxt iteration
+end
+end
+endmodule
+
+//testbench
+`timescale 1ns / 1ps
+
+module booth_tb;
+
+	// Inputs
+	reg [7:0] x;
+	reg [7:0] y;
+
+	// Outputs
+	wire [15:0] z;
+
+	// Instantiate the Unit Under Test (UUT)
+	booth_16 uut (
+		.x(x), 
+		.y(y), 
+		.z(z)
+	);
+
+	initial begin
+
+x = 8'b00000000;
+y = 8'b00000000;
+
+#10
+
+y = 8'b11111111;
+x = 8'b11111111;
+
+#10  
+
+x = 8'b01010101;
+y = 8'b00000000;
+
+#10
+
+x = 8'b10101010;
+y = 8'b10101010;
+
+#10
+
+x = 8'b01010101;
+y = 8'b01010101;
+
+#10
+x = 8'b10000000;
+y = 8'b10111110;
+
+		
+
+	end
+      
+endmodule
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//4bit
+`timescale 1ns / 1ps
+module booth_16(x,y,z);
+input signed [3:0] x,y;
+output signed [7:0] z;
+reg signed [7:0] z;
+reg[1:0] temp;//q_1 and multiplicand(y) last bit
+integer i;// for purpose of loop
+reg e1;// stores the previous bit of booth may be q_1
+reg [3:0] y1;//declares 16 bit to store negated value of y i.e; multiplicand
+always @(x,y)
+begin
+z = 8'd0;
+e1 = 1'd0;
+y1 = - y;// used to store negated of y in y1
+z[3:0]=x;//places the i/p of first 16 in lower bits of z and other 16 will be zero
+for(i=0;i<4;i=i+1)//iteartion 16 times for 16 x i/p
+begin
+temp={x[i],e1}; //concates the psnt bit of x and previous bit of e1
+case(temp)
+2'd2 : z[7:4]=z[7:4]+y1;//acc+multiplicand 
+2'd1 : z[7:4]=z[7:4]+y;//acc-multiplicand
+default : begin end
+endcase
+z=z>>1; // right shift
+z[7]=z[6];//assigning the sign bit before shift to the after shifted one
+e1=x[i]; // updates the value with curnt bit of x for nxt iteration
+end
+end
+endmodule
+
+
+`timescale 1ns / 1ps
+module booth_tb;
+
+	// Inputs
+	reg [3:0] x;
+	reg [3:0] y;
+
+	// Outputs
+	wire [7:0] z;
+
+	// Instantiate the Unit Under Test (UUT)
+	booth_16 uut (
+		.x(x), 
+		.y(y), 
+		.z(z)
+	);
+
+	initial begin
+		x=4'b1010;
+		y=4'b1010;
+		#10
+		
+		x=4'b1111;
+		y=4'b1111;
+		#10
+		x=4'b01010;
+		y=4'b01010;
+		#10
+		
+		x=4'b0111;
+		y=4'b0111;
+		#10
+		#10 $finish;
+
+	end
+      
+endmodule
+
+
